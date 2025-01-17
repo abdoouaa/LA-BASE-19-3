@@ -3,7 +3,6 @@
 <head>
   <base target="_top">
   <style>
-   
     body {
       font-family: Arial, sans-serif;
       background-color: #f9f9f9;
@@ -64,8 +63,7 @@
       border-color: #357ab8;
     }
 
-    
-    #filterButton {
+    .button {
       margin-top: 10px;
       padding: 10px 20px;
       background-color: #4a90e2;
@@ -76,37 +74,21 @@
       font-size: 16px;
     }
 
-    #filterButton:hover {
+    .button:hover {
       background-color: #357ab8;
     }
-    .goToforme {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 16px;
-    }
-
-    .goToforme:hover {
-      background-color: #357ab8;
-    }
-
   </style>
 </head>
 <body>
 
   <h3>LA BASE (CAMPO)</h3>
   <div style="text-align: center; margin-top: 10px;">
-    <button class="goToforme" id="copyLinkButton">Copier le lien</button>
-    <button id="filterButton" onclick="filterTable()">Recherch</button>
-    <button id="filterButton" onclick="downloadTable()">Télécharger</button>
+    <button class="button" id="copyLinkButton">Copier le lien</button>
+    <button class="button" id="filterButton" onclick="filterTable()">Rechercher</button>
+    <button class="button" id="downloadButton" onclick="downloadTable()">Télécharger</button>
   </div>
   <table id="dataTable">
     <thead>
-
       <tr>
         <th><input type="text" id="filter1" placeholder="Filtre..."></th>
         <th><input type="text" id="filter2" placeholder="Filtre..."></th>
@@ -125,34 +107,34 @@
     <tbody id="tableData"></tbody>
   </table>
 
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script>
     document.getElementById('copyLinkButton').addEventListener('click', function() {
-            const pageLink = window.location.href;
+      const pageLink = window.location.href;
 
-            navigator.clipboard.writeText(pageLink)
-                .then(() => {
-                    alert("Lien de la page copié dans le presse-papiers");
-                })
-                .catch(err => {
-                    console.error("Impossible de copier le lien : ", err);
-                    alert("Échec de la copie du lien.");
-                });
+      navigator.clipboard.writeText(pageLink)
+        .then(() => {
+          alert("Lien de la page copié dans le presse-papiers");
+        })
+        .catch(err => {
+          console.error("Impossible de copier le lien : ", err);
+          alert("Échec de la copie du lien.");
         });
-     function downloadTable() {
-            var table = document.getElementById("dataTable");
-            var rows = table.rows;
-            var degree = rows[2].cells[4].innerText;
-            var wb = XLSX.utils.table_to_book(table, {sheet: "base"});
-            XLSX.writeFile(wb, `${degree}.xlsx`); 
-        }
-    let data = [];  
+    });
+
+    function downloadTable() {
+      var table = document.getElementById("dataTable");
+      var wb = XLSX.utils.table_to_book(table, { sheet: "base" });
+      XLSX.writeFile(wb, "table_data.xlsx");
+    }
+
+    let data = [];
     function loadData() {
       fetch('https://script.google.com/macros/s/AKfycbzs2t6jEozye8kPgZHOd9G81GH62J2Ap3mQZuQVwXIF/dev')
         .then(response => response.json())
         .then(jsonData => {
-          data = jsonData;  
+          data = jsonData;
+          renderTable(data);
         })
         .catch(error => {
           console.error('Error loading data:', error);
@@ -176,32 +158,17 @@
         document.getElementById("filter5").value.toLowerCase()
       ];
 
-      const allFiltersEmpty = filters.every((filter, i) => i === 3 || filter === "");
-
-      if (allFiltersEmpty) {
-        document.getElementById('tableData').innerHTML = ''; 
-        return;
-      }
-
       const filteredData = data.filter(row =>
         filters.every((filter, i) => {
-          if (!filter || i === 3) return true;  
-
+          if (!filter || i === 3) return true;
           const cellValue = row[i] ? row[i].toString().toLowerCase() : '';
-
-          
-          if (i === 4) {
-            const regex = new RegExp(filter, 'i'); 
-            return regex.test(cellValue); 
-          }
-
           return cellValue.includes(filter);
         })
       );
 
-      renderTable(filteredData); 
+      renderTable(filteredData);
     }
-    
+
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
