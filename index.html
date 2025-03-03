@@ -95,13 +95,15 @@
         <th><input type="text" id="filter3" placeholder="Filtre..."></th>
         <th><input type="text" id="filter4" placeholder="Filtre..." disabled></th>
         <th><input type="text" id="filter5" placeholder="Filtre..."></th>
+        <th><input type="text" id="filter6" placeholder="Filtre..."></th>
       </tr>
       <tr>
-        <th>CODIGO</th>
-        <th>NOMBRE</th>
-        <th>NIF</th>
-        <th>CONTRATO</th>
-        <th>ENCARGADO</th>
+        <th>CODE</th>
+        <th>FULLNAME</th>
+        <th>SEXE</th>
+        <th>CIN</th>
+        <th>MATRICULE</th>
+        <th>DÉPARTEMENT</th>
       </tr>
     </thead>
     <tbody id="tableData"></tbody>
@@ -124,13 +126,13 @@
 
     function downloadTable() {
       var table = document.getElementById("dataTable");
-      var wb = XLSX.utils.table_to_book(table, { sheet: "base" });
+      var wb = XLSX.utils.table_to_book(table, { sheet: "point" });
       XLSX.writeFile(wb, "table_data.xlsx");
     }
 
     let data = [];
     function loadData() {
-      fetch('https://script.google.com/macros/s/AKfycbwsey_TpeFoVY4eUu7FcHmPKb_qwtxNnL0dhIWxx9aCLhWRlpODdt8ijZj2wx0EghwrhQ/exec')
+      fetch('https://script.google.com/macros/s/AKfycbyee4RDKGcAOJagZJP3URsqbBJB-q0ZFkYgjx7XJswhhBkJ5FnNsTyAfkAvFDw_Q0JBew/exec')
         .then(response => response.json())
         .then(jsonData => {
           data = jsonData;
@@ -156,6 +158,7 @@
         document.getElementById("filter3").value.toLowerCase(),
         "", 
         document.getElementById("filter5").value.toLowerCase()
+        document.getElementById("filter6").value.toLowerCase()
       ];
 
       const filteredData = data.filter(row =>
